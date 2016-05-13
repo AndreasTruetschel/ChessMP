@@ -1,0 +1,23 @@
+﻿<Application x:Class="ChessMP.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:ChessMP"
+             StartupUri="MainWindow.xaml">
+    <Application.Resources>
+        <ImageBrush x:Key="bishop_white" ImageSource="Pieces/Bishop_white.png" Viewport="0.1,0.1,0.8,0.8"/>
+        <ImageBrush x:Key="king_white" ImageSource="Pieces/King_white.png" Viewport="0.1,0.1,0.8,0.8"/>
+        <ImageBrush x:Key="knight_white" ImageSource="Pieces/Knight_white.png" Viewport="0.1,0.1,0.8,0.8"/>
+        <ImageBrush x:Key="pawn_white" ImageSource="Pieces/Pawn_white.png" Viewport="0.1,0.1,0.8,0.8"/>
+        <ImageBrush x:Key="queen_white" ImageSource="Pieces/Queen_white.png" Viewport="0.1,0.1,0.8,0.8"/>
+        <ImageBrush x:Key="rook_white" ImageSource="Pieces/Rook_white.png" Viewport="0.1,0.1,0.8,0.8"/>
+
+        <ImageBrush x:Key="bishop_black" ImageSource="Pieces/Bishop_black.png" Viewport="0.1,0.1,0.8,0.8"/>
+        <ImageBrush x:Key="king_black" ImageSource="Pieces/King_black.png" Viewport="0.1,0.1,0.8,0.8"/>
+        <ImageBrush x:Key="knight_black" ImageSource="Pieces/Knight_black.png" Viewport="0.1,0.1,0.8,0.8"/>
+        <ImageBrush x:Key="pawn_black" ImageSource="Pieces/Pawn_black.png" Viewport="0.1,0.1,0.8,0.8"/>
+        <ImageBrush x:Key="queen_black" ImageSource="Pieces/Queen_black.png" Viewport="0.1,0.1,0.8,0.8"/>
+        <ImageBrush x:Key="rook_black" ImageSource="Pieces/Rook_black.png" Viewport="0.1,0.1,0.8,0.8"/>
+        
+        <local:DynamicResource x:Key="dynamicResource"/>
+    </Application.Resources>
+</Application>

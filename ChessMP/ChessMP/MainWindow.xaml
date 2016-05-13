@@ -1,0 +1,52 @@
+﻿<Window x:Class="ChessMP.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ChessMP"
+        xmlns:vm="clr-namespace:ChessMP.ViewModel"
+        mc:Ignorable="d"
+        Title="Chess" Width="600" Height="623" MinWidth="600" MinHeight="623">
+    <Window.DataContext>
+        <vm:GameViewModel/>
+    </Window.DataContext>
+    <DockPanel>
+        <local:GameNetworkHelper DataContext="{Binding NetStream, Mode=TwoWay}"/>
+        <Border Name="board" Width="{Binding RelativeSource={RelativeSource Self}, Path=ActualHeight}" DataContext="{Binding BoardViewModel}">
+            <ItemsControl ItemsSource="{Binding Tiles}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <UniformGrid/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate DataType="{x:Type vm:BoardTileViewModel}">
+                        <Button VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch" Command="{Binding Commands[Select]}">
+                            <Border Background="{Binding Piece, Converter={StaticResource dynamicResource}}">
+                                <ContentControl Content="{Binding Name}" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="3px 0 0 3px" FontSize="10px"/>
+                            </Border>
+                            <Button.Style>
+                                <Style TargetType="{x:Type Button}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Color}" Value="Black">
+                                            <Setter Property="Background" Value="Gray"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Color}" Value="White">
+                                            <Setter Property="Background" Value="White"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding HoverState}" Value="Movement">
+                                            <Setter Property="Background" Value="LightGreen"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding HoverState}" Value="Capture">
+                                            <Setter Property="Background" Value="Red"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </Border>
+    </DockPanel>
+</Window>
