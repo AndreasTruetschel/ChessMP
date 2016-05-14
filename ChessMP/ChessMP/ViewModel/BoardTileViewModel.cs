@@ -167,8 +167,9 @@ namespace ChessMP.ViewModel
                 {
                     int xOld = _parent._selectedTile._x;
                     int yOld = _parent._selectedTile._y;
-                    _parent._selectedTile._model.MoveTo(_x, _y, _parent.Model);
-                    _parent.Model.Game.NetStream.SendData(xOld, yOld, _x, _y);
+                    _parent._selectedTile._model.MoveTo(_x, _y);
+
+                    _parent.Model.CheckOrCheckmate();
                     UpdateModel();
                     _parent._selectedTile.UpdateModel();
                     _parent._selectedTile = null;
@@ -228,7 +229,7 @@ namespace ChessMP.ViewModel
             {
                 for (int j = 0; j < 8; j++)
                 {
-                    if (_model.CanMoveTo(j, i, _parent.Model) && !(_model.WouldBeOwnKingCapturable(_x, _y, j, i)))
+                    if (_model.CanMoveTo(j, i) && !(_model.WouldBeOwnKingCapturable(_x, _y, j, i)))
                     {
                         if (_parent.Tiles[j + i * 8]._model == null)
                             _parent.Tiles[j + i * 8].HoverState = BoardHoverState.Movement;

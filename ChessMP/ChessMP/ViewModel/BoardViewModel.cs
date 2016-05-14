@@ -52,17 +52,13 @@ namespace ChessMP.ViewModel
 
             for(int i = 0; i < 8 * 8; i++)
             {
-                // Tile coordinates
-                int x = i % 8; // TODO: Compute tile x coordinate from i 
-                int y = i / 8; // TODO: Compute tile y coordiante from i
-
-                // Tip: Use / and % here.
+                int x = i % 8;
+                int y = i / 8;
 
                 // Init Tile
-                BoardTileViewModel tile = new BoardTileViewModel(this, x, y); // TODO: Initialize a new tile
+                BoardTileViewModel tile = new BoardTileViewModel(this, x, y);
 
                 // Save to list
-                // TODO: Save the tile in the Tiles array.
                 _tiles[x + y * 8] = tile;
             }
         }        

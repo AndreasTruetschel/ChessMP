@@ -9,7 +9,7 @@ namespace ChessMP.Model
     /// <summary>
     /// Base class for all chess pieces.
     /// </summary>
-    public abstract class Piece : INotifyPropertyChanged, ICloneable<Piece>
+    public abstract class Piece : INotifyPropertyChanged
     {
         protected readonly Board _board;
         protected readonly PieceColor _color;
@@ -105,6 +105,35 @@ namespace ChessMP.Model
         }
 
         /// <summary>
+        /// Checks if a piece is capturable at the specified coordinates.
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <returns></returns>
+        public bool Capturable
+        {
+            get
+            {
+                for (int i = 0; i < 8; i++)
+                {
+                    for (int j = 0; j < 8; j++)
+                    {
+                        if (Board[j, i] != null && Board[j, i].CanMoveTo(PositionX, PositionY))
+                            return true;
+                    }
+                }
+
+                return false;
+            }
+
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <returns></returns>
+        public abstract Piece Clone();
+
+        /// <summary>
         /// Returns a boolean value in a derived class indicating whether 
         /// the piece can be moved to the specified target coordiantes.
         /// </summary>
@@ -112,15 +141,7 @@ namespace ChessMP.Model
         /// <param name="y">The y-component of the target coordinates.</param>
         /// <returns>True if the piece can be moved to the target coordinates, false otherwise.</returns>
         /// <exception cref="ArgumentOutOfRangeException">Thrown if either <paramref name="x"/> or <paramref name="y"/> is out of range.</exception>
-        public abstract bool CanMoveTo(int x, int y, Board Board);
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <returns></returns>
-        public abstract Piece Clone(Board board);
-
-        public abstract Piece Clone();        
+        public abstract bool CanMoveTo(int x, int y);
 
         /// <summary>
         /// Moves the piece to the specified target coordinate if this is possible,
@@ -130,14 +151,16 @@ namespace ChessMP.Model
         /// <param name="y">The y-component of the target coordinates.</param>
         /// <returns>True if the piece can be moved to the target coordinates, false otherwise.</returns>
         /// <exception cref="ArgumentOutOfRangeException">Thrown if either <paramref name="x"/> or <paramref name="y"/> is out of range.</exception>
-        public virtual bool MoveTo(int x, int y, Board Board)
+        public virtual bool MoveTo(int x, int y)
         {
             // Move the piece to the specified position, after checking if this move is legal.
             // If a piece is placed on the target position, notify it with a call to Capture().
 
+            int xOld = PositionX;
+            int yOld = PositionY;
             Piece pieceOnTargetPosition = Board[x, y];
 
-            if (CanMoveTo(x, y, Board))
+            if (CanMoveTo(x, y))
             {
                 Board[PositionX, PositionY] = null;
                 Board[x, y] = this;
@@ -146,6 +169,7 @@ namespace ChessMP.Model
                 if (pieceOnTargetPosition != null)
                     Capture(pieceOnTargetPosition);
 
+                Board.TerminateDraw(xOld, yOld, x, y);
                 return true;
             }
 
@@ -162,7 +186,7 @@ namespace ChessMP.Model
             if (capturedPiece == null)
                 throw new ArgumentNullException(nameof(capturedPiece));
 
-            RaisePropertyChanged(nameof(capturedPiece));
+            
         }
 
         protected bool CanMoveStraight(int x, int y, Board Board)
@@ -269,32 +293,6 @@ namespace ChessMP.Model
         }
 
         /// <summary>
-        /// Checks if a piece is capturable at the specified coordinates.
-        /// </summary>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <returns></returns>
-        public bool Capturable(int x, int y, Board Board)
-        {
-            if (x < 0 || x > 7)
-                throw new ArgumentOutOfRangeException(nameof(x));
-
-            if (y < 0 || y > 7)
-                throw new ArgumentOutOfRangeException(nameof(y));
-
-            for (int i = 0; i < 8; i++)
-            {
-                for (int j = 0; j < 8; j++)
-                {
-                    if (Board[j, i] != null && Board[j, i].CanMoveTo(x, y, Board))
-                        return true;
-                }
-            }
-
-            return false;
-        }
-
-        /// <summary>
         /// Checks if the own king will be capturable if the piece would do this move.
         /// </summary>
         /// <param name="xCurrent"></param>
@@ -312,23 +310,25 @@ namespace ChessMP.Model
                 throw new ArgumentOutOfRangeException(nameof(xNew));
             if (yNew < 0 || yNew > 7)
                 throw new ArgumentOutOfRangeException(nameof(yNew));
-
-            Board clone = (Board)Board.Clone();
-            if (!(Board[xCurrent, yCurrent].CanMoveTo(xNew, yNew, clone)))
+            
+            if (!(Board[xCurrent, yCurrent].CanMoveTo(xNew, yNew)))
                 return false;
 
-            
+
             int xKing = -1;
             int yKing = -1;
+            Piece tmp = Board[xNew, yNew];
 
-            clone[xNew, yNew] = clone[xCurrent, yCurrent];
-            clone[xCurrent, yCurrent] = null;
+            
+
+            Board[xNew, yNew] = Board[xCurrent, yCurrent];
+            Board[xCurrent, yCurrent] = null;
 
             for (int i = 0; i < 8; i++)
             {
                 for (int j = 0; j < 8; j++)
                 {
-                    if (clone[j, i] is King && clone[j, i].Color == Color)
+                    if (Board[j, i] is King && Board[j, i].Color == Color)
                     {
                         xKing = j;
                         yKing = i;
@@ -336,7 +336,10 @@ namespace ChessMP.Model
                 }
             }
 
-            return Capturable(xKing, yKing, clone);
+            bool result = Board[xKing, yKing].Capturable;
+            Board[xCurrent, yCurrent] = Board[xNew, yNew];
+            Board[xNew, yNew] = tmp;
+            return result;
         }
 
         /// <summary>
@@ -354,7 +357,7 @@ namespace ChessMP.Model
                 throw new ArgumentNullException(nameof(propertyName));
             if (PropertyChanged != null)
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
-        }       
+        }
     }
 
     /// <summary>
@@ -391,7 +394,7 @@ namespace ChessMP.Model
         /// <param name="y">The y-component of the target coordinates.</param>
         /// <returns>True if the piece can be moved to the target coordinates, false otherwise.</returns>
         /// <exception cref="ArgumentOutOfRangeException">Thrown if either <paramref name="x"/> or <paramref name="y"/> is out of range.</exception>
-        public override bool CanMoveTo(int x, int y, Board Board)
+        public override bool CanMoveTo(int x, int y)
         {
             if (x < 0 || x > 7)
                 throw new ArgumentOutOfRangeException(nameof(x));
@@ -400,7 +403,7 @@ namespace ChessMP.Model
                 throw new ArgumentOutOfRangeException(nameof(y));
 
             // 1 field in any direction
-            if (((Math.Abs(x - PositionX) == 1 && Math.Abs(y - PositionY) == 1) || Math.Abs(x - PositionX) == 1 && y - PositionY == 0 || Math.Abs(y - PositionY) == 1 && x - PositionX == 0) && !(Capturable(x, y, Board)))
+            if (((Math.Abs(x - PositionX) == 1 && Math.Abs(y - PositionY) == 1) || Math.Abs(x - PositionX) == 1 && y - PositionY == 0 || Math.Abs(y - PositionY) == 1 && x - PositionX == 0))
                 return SpotEmptyOrPieceOfDifferentColor(x, y, Board);
 
             //// 1 field left or right
@@ -414,14 +417,9 @@ namespace ChessMP.Model
             return false;
         }
 
-        public override Piece Clone(Board board)
-        {
-            return new King(board, Color);
-        }
-
         public override Piece Clone()
         {
-            throw new NotImplementedException();
+            return new King(Board, Color);
         }
     }
 
@@ -447,19 +445,14 @@ namespace ChessMP.Model
         /// <param name="y">The y-component of the target coordinates.</param>
         /// <returns>True if the piece can be moved to the target coordinates, false otherwise.</returns>
         /// <exception cref="ArgumentOutOfRangeException">Thrown if either <paramref name="x"/> or <paramref name="y"/> is out of range.</exception>
-        public override bool CanMoveTo(int x, int y, Board Board)
+        public override bool CanMoveTo(int x, int y)
         {
             return CanMoveDiagonal(x, y, Board) || CanMoveStraight(x, y, Board);
         }
 
-        public override Piece Clone(Board board)
-        {
-            return new Queen(board, Color);
-        }
-
         public override Piece Clone()
         {
-            throw new NotImplementedException();
+            return new Queen(Board, Color);
         }
     }
 
@@ -485,19 +478,14 @@ namespace ChessMP.Model
         /// <param name="y">The y-component of the target coordinates.</param>
         /// <returns>True if the piece can be moved to the target coordinates, false otherwise.</returns>
         /// <exception cref="ArgumentOutOfRangeException">Thrown if either <paramref name="x"/> or <paramref name="y"/> is out of range.</exception>
-        public override bool CanMoveTo(int x, int y, Board Board)
+        public override bool CanMoveTo(int x, int y)
         {
             return CanMoveDiagonal(x, y, Board);
         }
 
-        public override Piece Clone(Board board)
-        {
-            return new Bishop(board, Color);
-        }
-
         public override Piece Clone()
         {
-            throw new NotImplementedException();
+            return new Bishop(Board, Color);
         }
     }
 
@@ -523,7 +511,7 @@ namespace ChessMP.Model
         /// <param name="y">The y-component of the target coordinates.</param>
         /// <returns>True if the piece can be moved to the target coordinates, false otherwise.</returns>
         /// <exception cref="ArgumentOutOfRangeException">Thrown if either <paramref name="x"/> or <paramref name="y"/> is out of range.</exception>
-        public override bool CanMoveTo(int x, int y, Board Board)
+        public override bool CanMoveTo(int x, int y)
         {
             if (x < 0 || x > 7)
                 throw new ArgumentOutOfRangeException(nameof(x));
@@ -542,14 +530,9 @@ namespace ChessMP.Model
             return false;
         }
 
-        public override Piece Clone(Board board)
-        {
-            return new Knight(board, Color);
-        }
-
         public override Piece Clone()
         {
-            throw new NotImplementedException();
+            return new Knight(Board, Color);
         }
     }
 
@@ -577,7 +560,7 @@ namespace ChessMP.Model
         /// <param name="y">The y-component of the target coordinates.</param>
         /// <returns>True if the piece can be moved to the target coordinates, false otherwise.</returns>
         /// <exception cref="ArgumentOutOfRangeException">Thrown if either <paramref name="x"/> or <paramref name="y"/> is out of range.</exception>
-        public override bool CanMoveTo(int x, int y, Board Board)
+        public override bool CanMoveTo(int x, int y)
         {
             if (x < 0 || x > 7)
                 throw new ArgumentOutOfRangeException(nameof(x));
@@ -635,29 +618,23 @@ namespace ChessMP.Model
             return false;
         }
 
+        public override Piece Clone()
+        {
+            return new Pawn(Board, Color);
+        }
 
-        public override bool MoveTo(int x, int y, Board Board)
+        public override bool MoveTo(int x, int y)
         {
             // Move the piece to the specified position, after checking if this move is legal.
             // If a piece is placed on the target position, notify it with a call to Capture().
 
-            if (base.MoveTo(x, y, Board))
+            if (base.MoveTo(x, y))
             {
                 _moves++;
                 return true;
             }
 
             return false;
-        }
-
-        public override Piece Clone(Board board)
-        {
-            return new Pawn(board, Color);
-        }
-
-        public override Piece Clone()
-        {
-            throw new NotImplementedException();
         }
     }
 
@@ -683,19 +660,14 @@ namespace ChessMP.Model
         /// <param name="y">The y-component of the target coordinates.</param>
         /// <returns>True if the piece can be moved to the target coordinates, false otherwise.</returns>
         /// <exception cref="ArgumentOutOfRangeException">Thrown if either <paramref name="x"/> or <paramref name="y"/> is out of range.</exception>
-        public override bool CanMoveTo(int x, int y, Board Board)
+        public override bool CanMoveTo(int x, int y)
         {
             return CanMoveStraight(x, y, Board);
         }
 
-        public override Piece Clone(Board board)
-        {
-            return new Rook(board, Color);
-        }
-
         public override Piece Clone()
         {
-            throw new NotImplementedException();
+            return new Rook(Board, Color);
         }
     }
 }

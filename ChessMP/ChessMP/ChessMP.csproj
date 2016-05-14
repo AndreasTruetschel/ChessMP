@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{53A0F361-ED62-4DB5-B570-B0A57E4FC90A}</ProjectGuid>
+    <ProjectGuid>{004C8E23-2006-44AB-A5CC-A20BABEA29EF}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ChessMP</RootNamespace>
@@ -54,14 +54,22 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Command.cs" />
+    <Compile Include="DynamicResource.cs" />
+    <Compile Include="GameNetworkHelper.cs" />
+    <Compile Include="GameNetworkWindow.xaml.cs">
+      <DependentUpon>GameNetworkWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="IPEndPointToStringConverter.cs" />
+    <Compile Include="Model\GameNetworkConnection.cs" />
     <Compile Include="ViewModel\BoardTileViewModel.cs" />
     <Compile Include="ViewModel\BoardViewModel.cs" />
     <Compile Include="ViewModel\GameNetworkConnectionViewModel.cs" />
     <Compile Include="ViewModel\GameViewModel.cs" />
     <Compile Include="ViewModel\ViewModel.cs" />
     <Page Include="GameNetworkWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -71,14 +79,6 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Command.cs" />
-    <Compile Include="DynamicResource.cs" />
-    <Compile Include="GameNetworkHelper.cs" />
-    <Compile Include="GameNetworkWindow.xaml.cs">
-      <DependentUpon>GameNetworkWindow.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="ICloneable.cs" />
-    <Compile Include="IPEndPointToStringConverter.cs" />
     <Compile Include="MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -87,7 +87,6 @@
   <ItemGroup>
     <Compile Include="Model\Board.cs" />
     <Compile Include="Model\Game.cs" />
-    <Compile Include="Model\GameNetworkConnection.cs" />
     <Compile Include="Model\Piece.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>

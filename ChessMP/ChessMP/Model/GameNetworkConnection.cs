@@ -52,32 +52,16 @@ namespace ChessMP.Model
         public bool MyTurn
         {
             get
-            { return _myTurn; }
+            {
+                return _myTurn;
+            }
+
             set
             {
                 _myTurn = value;
                 RaisePropertyChanged("MyTurn");
             }
         }
-
-        // async void ist Mist. Besser immer async Task, wobei die Lösung jetzt auch nicht das gelbe vom Ei ist, aber akzeptabel.
-
-
-        //public async void CreateHost()
-        //{
-        //    TcpListener listener = new TcpListener(IPAddress.Any, 9000);
-        //    listener.Start();
-        //    Socket socket = await listener.AcceptSocketAsync();
-        //    if (socket.Connected)
-        //    {
-        //        _netStream = new NetworkStream(socket);
-        //        _isConnected = true;
-        //        _isServer = true;
-        //        _playersColour = PieceColor.White;
-        //        _myTurn = true;
-        //        MessageBox.Show("Server connected.");
-        //    }
-        //}
 
         private Task _connectionTask = null;
 
@@ -102,37 +86,7 @@ namespace ChessMP.Model
                 MessageBox.Show("Server connected.");
             }
         }
-
-        //public async void CreateClient(IPEndPoint ipEndPoint)
-        //{
-        //    TcpClient client = new TcpClient();
-        //    int n = 0;
-        //    while (n < 5)
-        //    {
-        //        try
-        //        {
-        //            await client.ConnectAsync(ipEndPoint.Address, 9000);
-        //            if (client.Connected)
-        //            {
-        //                _netStream = client.GetStream();
-        //                _isConnected = true;
-        //                _isClient = true;
-        //                _playersColour = PieceColor.Black;
-        //                MessageBox.Show("Client connected with host");
-
-        //                break;
-        //            }
-        //            n++;
-        //        }
-
-        //        catch (SocketException)
-        //        {
-        //            n++;
-        //            MessageBox.Show("Connection failed, try again");
-        //        }
-        //    }
-        //}
-
+       
         public void CreateClient(IPEndPoint ipEndPoint)
         {
             _connectionTask = CreateClientAsync(ipEndPoint);
@@ -180,7 +134,6 @@ namespace ChessMP.Model
             {
                 bf.Serialize(NetStream, array);
                 NetStream.Flush();
-                MyTurn = false;
             }
 
             catch (IOException )

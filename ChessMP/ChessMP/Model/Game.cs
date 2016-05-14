@@ -84,35 +84,7 @@ namespace ChessMP.Model
 
             for (int i = 2; i <= 5; i++)
                 for (int j = 0; j <= 7; j++)
-                    Board[j, i] = null;
-
-            Task receive = Task.Run(() =>
-            {
-                while (true)
-                {
-                    if (NetStream != null && NetStream.IsConnected == true)
-                    {
-                        int[] a = { -1, -1, -1, -1 };
-                        try
-                        {
-                            a = NetStream.ReceiveData();
-                            if (a != null && a[0] != -1 && a[1] != -1 && a[2] != -1 && a[3] != -1 && Board[a[0], a[1]] != null)
-                            {
-                                Board[a[2], a[3]] = Board[a[0], a[1]];
-                                Board[a[0], a[1]] = null;
-                                NetStream.MyTurn = true;
-                            }
-                        }
-
-                        catch (IOException)
-                        {
-                            MessageBox.Show("Connection lost. Close game and start a new one.");
-                            break;
-                        }
-
-                    }
-                }
-            });
+                    Board[j, i] = null;           
         }
     }
 }

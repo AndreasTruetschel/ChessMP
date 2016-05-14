@@ -12,7 +12,7 @@ namespace ChessMP.Model
     /// <summary>
     /// Represents a chess board.
     /// </summary>
-    public class Board : INotifyPropertyChanged, ICloneable<Board>
+    public class Board : INotifyPropertyChanged
     {
         private Piece[] _data = new Piece[8 * 8];
         private Game _game;
@@ -28,6 +28,37 @@ namespace ChessMP.Model
             }
 
             _game = game;
+
+            Task receive = Task.Run(() =>
+            {
+                while (true)
+                {
+                    if (Game.NetStream != null && Game.NetStream.IsConnected == true)
+                    {
+                        int[] a = { -1, -1, -1, -1 };
+                        try
+                        {
+                            a = Game.NetStream.ReceiveData();
+                            if (a != null && a[0] != -1 && a[1] != -1 && a[2] != -1 && a[3] != -1 && this[a[0], a[1]] != null)
+                            {
+                                this[a[2], a[3]] = this[a[0], a[1]];
+                                RaisePropertyChanged($"Index[{a[2]}, {a[3]}]");
+                                this[a[0], a[1]] = null;
+                                RaisePropertyChanged($"Index[{a[0]}, {a[1]}]");
+                                Game.NetStream.MyTurn = true;
+                                CheckOrCheckmate();
+                            }
+                        }
+
+                        catch (IOException)
+                        {
+                            MessageBox.Show("Connection lost. Close game and start a new one.");
+                            break;
+                        }
+
+                    }
+                }
+            });
         }
 
         public Game Game
@@ -68,8 +99,29 @@ namespace ChessMP.Model
 
                 _data[y * 8 + x] = value;
 
-                RaisePropertyChanged($"Index[{x}, {y}]");
+                //RaisePropertyChanged($"Index[{x}, {y}]");
             }
+        }
+
+        //[IndexerName("Index")]
+        //public Piece this[BoardPosition pos]
+        //{
+        //    get
+        //    {
+        //        return this[pos.X, pos.Y];
+        //    }
+        //    set
+        //    {
+        //        this[pos.X, pos.Y] = value;
+        //    }
+        //}
+
+        internal void TerminateDraw(int x1, int y1, int x2, int y2)
+        {
+            RaisePropertyChanged($"Index[{x1}, {y1}]");
+            RaisePropertyChanged($"Index[{x2}, {y2}]");
+            Game.NetStream.SendData(x1, y1, x2, y2);
+            Game.NetStream.MyTurn = false;
         }
 
         /// <summary>
@@ -92,26 +144,131 @@ namespace ChessMP.Model
                 PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        public Board Clone()
+        /// <summary>
+        /// Checks if one of the kings is in check.
+        /// </summary>
+        /// <returns></returns>
+        public string Check()
         {
-            Board clone = new Board(Game);
-            for (int y = 0; y < 8; y++)
+            string result = "";
+            for (int i = 0; i < 8; i++)
             {
-                for (int x = 0; x < 8; x++)
+                for (int j = 0; j < 8; j++)
                 {
-                    if(this[x,y] != null)
+                    if (this[j, i] is King && this[j, i].Capturable)
                     {
-                        clone[x, y] = this[x, y].Clone(clone);
+                        result += this[j, i].Color.ToString().ToLower();
                     }
                 }
             }
 
-            return clone;
+            return result;
         }
 
-        public Board Clone(Board board)
+        /// <summary>
+        /// Checks if one of the kings is checkmate.
+        /// </summary>
+        /// <returns></returns>
+        public string Checkmate()
         {
-            throw new NotImplementedException();
+            string result = "";
+            bool w = false;
+            bool b = false;
+            for (int y = 0; y < 8; y++)
+            {
+                for (int x = 0; x < 8; x++)
+                {
+                    for (int i = 0; i < 8; i++)
+                    {
+                        for (int j = 0; j < 8; j++)
+                        {
+                            if ((!w || !b) && this[x, y] != null && this[x, y].CanMoveTo(j, i) && !(this[x, y].WouldBeOwnKingCapturable(x, y, j, i)))
+                            {
+                                if (this[x, y].Color == PieceColor.White)
+                                    w = true;
+                                else
+                                    b = true;
+                            }
+                        }
+                    }
+                }
+            }
+
+            if (!w)
+                result += "white";
+            if (!b)
+                result += "black";
+
+            return result;
+        }
+
+        public void CheckOrCheckmate()
+        {
+            string mate = Checkmate();
+            if (mate != "")
+            {
+                MessageBox.Show("The " + mate + " King is in checkmate.");
+                return;
+            }
+
+            string check = Check();
+            if (check != "")
+                MessageBox.Show("The " + check + " King is in check.");
         }
     }
+
+    //public struct BoardPosition : IEquatable<BoardPosition>
+    //{
+    //    private readonly int _x, _y;
+
+    //    public BoardPosition(int x, int y)
+    //    {
+    //        if (x < 0 || x > 7)
+    //            throw new ArgumentOutOfRangeException(nameof(x));
+    //        if (y < 0 || y > 7)
+    //            throw new ArgumentOutOfRangeException(nameof(y));
+
+    //        _x = x;
+    //        _y = y;
+    //    }
+
+    //    public int X { get { return _x; } }
+    //    public int Y { get { return _y; } }
+
+
+    //    //    $"[{_x} {_y}]"
+
+    //    public override int GetHashCode()
+    //    {
+    //        return base.GetHashCode();
+    //    }
+
+    //    public override bool Equals(object obj)
+    //    {
+    //        return base.Equals(obj);
+    //    }
+    //    public bool Equals(BoardPosition other)
+    //    {
+    //        if (Object.ReferenceEquals(this, other))
+    //            return true;
+
+    //        if ((object)other == null)
+    //            return false;
+
+    //        if (this.X == other.X && this.Y == other.Y)
+    //            return true;
+    //        else
+    //            return false;
+    //    }
+
+    //    public static bool operator ==(BoardPosition a, BoardPosition b)
+    //    {
+    //        return a.Equals(b);
+    //    }
+
+    //    public static bool operator !=(BoardPosition a, BoardPosition b)
+    //    {
+    //        return !(a == b);
+    //    }
+    //}
 }
