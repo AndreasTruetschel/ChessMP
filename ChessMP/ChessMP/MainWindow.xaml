@@ -6,12 +6,71 @@
         xmlns:local="clr-namespace:ChessMP"
         xmlns:vm="clr-namespace:ChessMP.ViewModel"
         mc:Ignorable="d"
-        Title="Chess" Width="600" Height="623" MinWidth="600" MinHeight="623">
+        Title="Chess" Width="1200" Height="900" MinWidth="600" MinHeight="623">
     <Window.DataContext>
         <vm:GameViewModel/>
     </Window.DataContext>
     <DockPanel>
         <local:GameNetworkHelper DataContext="{Binding NetStream, Mode=TwoWay}"/>
+
+        <Border Name="CapturedBlTiles" DockPanel.Dock="Left" Height="{Binding ElementName=board, Path=ActualHeight}" Width="148" DataContext="{Binding BoardViewModel}" Margin="0, 0, 20, 0">
+            <ItemsControl ItemsSource="{Binding CapturedBlTiles}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <UniformGrid Columns="2" Rows="8"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate DataType="{x:Type vm:BoardTileViewModel}">
+                        <Button VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch">
+                            <Border Background="{Binding Piece, Converter={StaticResource dynamicResource}}"/>
+                            <Button.Style>
+                                <Style TargetType="{x:Type Button}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Color}" Value="Black">
+                                            <Setter Property="Background" Value="Gray"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Color}" Value="White">
+                                            <Setter Property="Background" Value="White"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </Border>
+
+        <Border Name="CapturedWhTiles" DockPanel.Dock="Right" Height="{Binding ElementName=board, Path=ActualHeight}" Width="148" DataContext="{Binding BoardViewModel}" Margin="20, 0, 0, 0">
+            <ItemsControl ItemsSource="{Binding CapturedBlTiles}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <UniformGrid Columns="2" Rows="8"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate DataType="{x:Type vm:BoardTileViewModel}">
+                        <Button VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch">
+                            <Border Background="{Binding Piece, Converter={StaticResource dynamicResource}}"/>
+                            <Button.Style>
+                                <Style TargetType="{x:Type Button}">
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding Color}" Value="Black">
+                                            <Setter Property="Background" Value="Gray"/>
+                                        </DataTrigger>
+                                        <DataTrigger Binding="{Binding Color}" Value="White">
+                                            <Setter Property="Background" Value="White"/>
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                        </Button>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </Border>
+
         <Border Name="board" Width="{Binding RelativeSource={RelativeSource Self}, Path=ActualHeight}" DataContext="{Binding BoardViewModel}">
             <ItemsControl ItemsSource="{Binding Tiles}">
                 <ItemsControl.ItemsPanel>
@@ -39,35 +98,6 @@
                                         </DataTrigger>
                                         <DataTrigger Binding="{Binding HoverState}" Value="Capture">
                                             <Setter Property="Background" Value="Red"/>
-                                        </DataTrigger>
-                                    </Style.Triggers>
-                                </Style>
-                            </Button.Style>
-                        </Button>
-                    </DataTemplate>
-                </ItemsControl.ItemTemplate>
-            </ItemsControl>
-        </Border>
-
-        <Border Name="CapturedBlTiles" DockPanel.Dock="Left" Height="{Binding ElementName=board, Path=ActualHeight}" Width="148" DataContext="{Binding BoardViewModel}" Margin="20, 0, 0, 0">
-            <ItemsControl ItemsSource="{Binding CapturedBlTiles}">
-                <ItemsControl.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <UniformGrid Columns="2" Rows="8"/>
-                    </ItemsPanelTemplate>
-                </ItemsControl.ItemsPanel>
-                <ItemsControl.ItemTemplate>
-                    <DataTemplate DataType="{x:Type vm:BoardTileViewModel}">
-                        <Button VerticalContentAlignment="Stretch" HorizontalContentAlignment="Stretch">
-                            <Border Background="{Binding Piece, Converter={StaticResource dynamicResource}}"/>
-                            <Button.Style>
-                                <Style TargetType="{x:Type Button}">
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding Color}" Value="Black">
-                                            <Setter Property="Background" Value="Gray"/>
-                                        </DataTrigger>
-                                        <DataTrigger Binding="{Binding Color}" Value="White">
-                                            <Setter Property="Background" Value="White"/>
                                         </DataTrigger>
                                     </Style.Triggers>
                                 </Style>

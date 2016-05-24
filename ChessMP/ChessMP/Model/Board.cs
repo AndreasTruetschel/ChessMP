@@ -105,6 +105,52 @@ namespace ChessMP.Model
             }
         }
 
+        public Piece GetCapturedWhite(int x, int y)
+        {            
+                if (x < 0 || x > 1)
+                    throw new ArgumentOutOfRangeException(nameof(x));
+
+                if (y < 0 || y > 7)
+                    throw new ArgumentOutOfRangeException(nameof(y));
+
+                return _capturedWhite[y * 2 + x];          
+        }
+        
+        public void SetCapturedWhite(int x, int y, Piece piece)
+        {
+            if (x < 0 || x > 1)
+                throw new ArgumentOutOfRangeException(nameof(x));
+
+            if (y < 0 || y > 7)
+                throw new ArgumentOutOfRangeException(nameof(y));
+
+            _capturedWhite[y * 2 + x] = piece;
+        }
+
+        public Piece GetCapturedBlack(int x, int y)
+        {
+            if (x < 0 || x > 1)
+                throw new ArgumentOutOfRangeException(nameof(x));
+
+            if (y < 0 || y > 7)
+                throw new ArgumentOutOfRangeException(nameof(y));
+
+            return _capturedBlack[y * 2 + x];
+        }
+
+        public void SetCapturedBlack(int x, int y, Piece piece)
+        {
+            if (x < 0 || x > 1)
+                throw new ArgumentOutOfRangeException(nameof(x));
+
+            if (y < 0 || y > 7)
+                throw new ArgumentOutOfRangeException(nameof(y));
+
+            _capturedBlack[y * 2 + x] = piece;
+        }
+
+
+
         //[IndexerName("Index")]
         //public Piece this[BoardPosition pos]
         //{
