@@ -15,6 +15,8 @@ namespace ChessMP.Model
     public class Board : INotifyPropertyChanged
     {
         private Piece[] _data = new Piece[8 * 8];
+        private Piece[] _capturedWhite = new Piece[2 * 8];
+        private Piece[] _capturedBlack = new Piece[2 * 8];
         private Game _game;
 
         /// <summary>

@@ -94,7 +94,7 @@ namespace ChessMP.Model
             get
             {
                 if (Board.Game.NetStream == null)
-                    throw new ArgumentNullException(nameof(Board.Game.NetStream));
+                    return false;
 
                 if (Color == Board.Game.NetStream.PlayersColour && Board.Game.NetStream.MyTurn && this != null)
                     return true;
