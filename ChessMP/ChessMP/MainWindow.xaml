@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:ChessMP"
         xmlns:vm="clr-namespace:ChessMP.ViewModel"
         mc:Ignorable="d"
-        Title="Chess" Width="1200" Height="900" MinWidth="600" MinHeight="623">
+        Title="Chess" Width="1300" Height="900" MinWidth="600" MinHeight="623">
     <Window.DataContext>
         <vm:GameViewModel/>
     </Window.DataContext>
@@ -26,14 +26,7 @@
                             <Border Background="{Binding Piece, Converter={StaticResource dynamicResource}}"/>
                             <Button.Style>
                                 <Style TargetType="{x:Type Button}">
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding Color}" Value="Black">
-                                            <Setter Property="Background" Value="Gray"/>
-                                        </DataTrigger>
-                                        <DataTrigger Binding="{Binding Color}" Value="White">
-                                            <Setter Property="Background" Value="White"/>
-                                        </DataTrigger>
-                                    </Style.Triggers>
+                                    <Setter Property="Button.Background" Value="Gray"/>
                                 </Style>
                             </Button.Style>
                         </Button>
@@ -55,14 +48,7 @@
                             <Border Background="{Binding Piece, Converter={StaticResource dynamicResource}}"/>
                             <Button.Style>
                                 <Style TargetType="{x:Type Button}">
-                                    <Style.Triggers>
-                                        <DataTrigger Binding="{Binding Color}" Value="Black">
-                                            <Setter Property="Background" Value="Gray"/>
-                                        </DataTrigger>
-                                        <DataTrigger Binding="{Binding Color}" Value="White">
-                                            <Setter Property="Background" Value="White"/>
-                                        </DataTrigger>
-                                    </Style.Triggers>
+                                    <Setter Property="Button.Background" Value="White"/>
                                 </Style>
                             </Button.Style>
                         </Button>

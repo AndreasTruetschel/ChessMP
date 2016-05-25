@@ -81,13 +81,15 @@ namespace ChessMP.ViewModel
                 _tiles[x + y * 8] = new BoardTileViewModel(this, x, y);
             }
 
-            for(int i = 0; i < 2 * 8; i++)
+            for(int i = 0; i < 16; i++)
             {
                 int x = i % 8;
                 int y = i / 8;
 
-                _capturedBlTiles[x + y * 2] = new BoardTileViewModel(this, x, y);
-                _capturedWhTiles[x + y * 2] = new BoardTileViewModel(this, x, y);                
+                _capturedBlTiles[x + y * 8] = new BoardTileViewModel(this, x, y);
+                _capturedWhTiles[x + y * 8] = new BoardTileViewModel(this, x, y);
+                
+                               
             }
         }        
     }
