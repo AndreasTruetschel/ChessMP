@@ -185,8 +185,22 @@ namespace ChessMP.Model
             // Use this to modify any state (f.e. properties) and also publish this (PropertyChanged).
             if (capturedPiece == null)
                 throw new ArgumentNullException(nameof(capturedPiece));
+           
+                for (int x = 0; x < 2; x++)
+                    for (int y = 0; y < 8; y++)
+                    {
+                        if (capturedPiece.Color == PieceColor.Black && Board.GetCapturedBlack(x, y) == null)
+                        {
+                            Board.SetCapturedBlack(x, y, capturedPiece);
+                            return;
+                        }
 
-            
+                        if (capturedPiece.Color == PieceColor.White && Board.GetCapturedWhite(x, y) == null)
+                        {
+                            Board.SetCapturedWhite(x, y, capturedPiece);
+                            return;
+                        }
+                    }             
         }
 
         protected bool CanMoveStraight(int x, int y, Board Board)

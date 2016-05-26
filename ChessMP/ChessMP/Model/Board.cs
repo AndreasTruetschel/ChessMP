@@ -105,6 +105,11 @@ namespace ChessMP.Model
             }
         }
 
+        public Piece[] CapturedWhite
+        {
+            get { return _capturedWhite; }
+        }
+
         public Piece GetCapturedWhite(int x, int y)
         {            
                 if (x < 0 || x > 1)
@@ -125,6 +130,13 @@ namespace ChessMP.Model
                 throw new ArgumentOutOfRangeException(nameof(y));
 
             _capturedWhite[y * 2 + x] = piece;
+
+            RaisePropertyChanged($"CapturedWhite[{x}, {y}]");
+        }
+
+        public Piece[] CapturedBlack
+        {
+            get { return _capturedBlack; }
         }
 
         public Piece GetCapturedBlack(int x, int y)
@@ -147,6 +159,8 @@ namespace ChessMP.Model
                 throw new ArgumentOutOfRangeException(nameof(y));
 
             _capturedBlack[y * 2 + x] = piece;
+
+            RaisePropertyChanged($"CapturedBlack[{x}, {y}]");
         }
 
 

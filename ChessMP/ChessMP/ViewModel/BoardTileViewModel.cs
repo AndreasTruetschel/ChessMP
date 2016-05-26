@@ -219,11 +219,6 @@ namespace ChessMP.ViewModel
                 HoverState = BoardHoverState.None;
                 Piece = null;
             }
-
-
-
-
-
         }
 
         private void UpdateModel(Object sender, PropertyChangedEventArgs e)
