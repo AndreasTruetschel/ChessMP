@@ -71,26 +71,38 @@ namespace ChessMP.ViewModel
             _capturedBlTiles = new BoardTileViewModel[2 * 8];
             _capturedWhTiles = new BoardTileViewModel[2 * 8];
 
-            for(int i = 0; i < 8 * 8; i++)
+            for (int i = 0; i < 8 * 8; i++)
             {
                 int x = i % 8;
                 int y = i / 8;
 
                 // Init Tile              
                 // Save to list
-                _tiles[x + y * 8] = new BoardTileViewModel(this, x, y);
+                _tiles[x + y * 8] = new BoardTileViewModel(this, x, y, Membership.Board);
             }
 
-            for(int i = 0; i < 16; i++)
+            for (int x = 0; x < 2; x++)
             {
-                int x = i % 8;
-                int y = i / 8;
+                for (int y = 0; y < 8; y++)
+                {
+                    // Init Tile              
+                    // Save to list
+                    _capturedBlTiles[x + y * 2] = new BoardTileViewModel(this, x, y, Membership.CapturedBl);
+                    _capturedWhTiles[x + y * 2] = new BoardTileViewModel(this, x, y, Membership.CapturedWh);
+                }
 
-                _capturedBlTiles[x + y * 8] = new BoardTileViewModel(this, x, y);
-                _capturedWhTiles[x + y * 8] = new BoardTileViewModel(this, x, y);
-                
-                               
             }
-        }        
+
+            //for (int i = 0; i < 16; i++)
+            //{
+            //    int x = i % 8;
+            //    int y = i / 8;
+
+            //    // Init Tile              
+            //    // Save to list
+            //    _capturedBlTiles[x + y * 2] = new BoardTileViewModel(this, x, y, Membership.CapturedBl);
+            //    _capturedWhTiles[x + y * 2] = new BoardTileViewModel(this, x, y, Membership.CapturedWh);
+            //}          
+        }
     }
 }

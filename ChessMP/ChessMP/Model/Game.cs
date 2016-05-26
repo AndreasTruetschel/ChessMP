@@ -84,13 +84,13 @@ namespace ChessMP.Model
 
             for (int i = 2; i <= 5; i++)
                 for (int j = 0; j <= 7; j++)
-                    Board[j, i] = null; 
+                    Board[j, i] = null;
             
-            for (int i = 0; i < 8; i++)
-                for(int j = 0; i < 2; i++)
+            for (int x = 0; x < 2; x++)
+                for(int y = 0; y < 8; y++)
                 {
-                    Board.SetCapturedBlack(j, i, null);
-                    Board.SetCapturedWhite(j, i, null);
+                    Board.SetCapturedBlack(x, y, null);
+                    Board.SetCapturedWhite(x, y, null);
                 }
        
         }

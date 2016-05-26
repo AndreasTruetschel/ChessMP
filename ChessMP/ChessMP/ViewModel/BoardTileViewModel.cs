@@ -15,6 +15,7 @@ namespace ChessMP.ViewModel
         private Piece _model;
         private BoardHoverState _hoverState = BoardHoverState.None;
         private string _piece = null;
+        private Membership _membership;
 
         /// <summary>
         /// Initialized a new instance of the <see cref="BoardTileViewModel"/> class.
@@ -22,20 +23,27 @@ namespace ChessMP.ViewModel
         /// <param name="parent">The parent view model.</param>
         /// <param name="x">The tiles x coordinate.</param>
         /// <param name="y">The tiles y corrdinate.</param>
-        public BoardTileViewModel(BoardViewModel parent, int x, int y)
+        public BoardTileViewModel(BoardViewModel parent, int x, int y, Membership membership)
         {
             if (parent == null)
                 throw new ArgumentNullException(nameof(parent));
 
-            if (x < 0 || x > 7)
+            if (membership == Membership.Board && (x < 0 || x > 7))
                 throw new ArgumentOutOfRangeException(nameof(x));
 
-            if (y < 0 || y > 7)
+            if (membership == Membership.Board && (y < 0 || y > 7))
+                throw new ArgumentOutOfRangeException(nameof(y));
+
+            if ((membership == Membership.CapturedBl || membership == Membership.CapturedWh) && (x < 0 || x > 1))
+                throw new ArgumentOutOfRangeException(nameof(x));
+
+            if ((membership == Membership.CapturedBl || membership == Membership.CapturedWh) && (y < 0 || y > 7))
                 throw new ArgumentOutOfRangeException(nameof(y));
 
             _x = x;
             _y = y;
             _parent = parent;
+            _membership = membership;
 
             UpdateModel();
             _parent.Model.PropertyChanged += UpdateModel;
@@ -180,7 +188,7 @@ namespace ChessMP.ViewModel
             }
         }
 
-        private void Board_PropertyChanged(object sender, System.ComponentModel.PropertyChangedEventArgs e)
+        private void Board_PropertyChanged(object sender, PropertyChangedEventArgs e)
         {
             if (e.PropertyName != $"Index[{_x}, {_y}]")
                 return;
@@ -192,12 +200,18 @@ namespace ChessMP.ViewModel
         /// </summary>
         private void UpdateModel()
         {
-            _model = Board[_x, _y];
+            if (_membership == Membership.Board)            
+                _model = Board[_x, _y];
+
+            if (_membership == Membership.CapturedBl)
+                _model = Board.GetCapturedBlack(_x, _y);
+
+            if (_membership == Membership.CapturedWh)
+                _model = Board.GetCapturedWhite(_x, _y);
 
             if (_model != null)
             {
                 HoverState = BoardHoverState.None;
-
                 Piece = _model.GetType().Name.ToLower() + "_" + _model.Color.ToString().ToLower();
             }
             else
@@ -205,6 +219,11 @@ namespace ChessMP.ViewModel
                 HoverState = BoardHoverState.None;
                 Piece = null;
             }
+
+
+
+
+
         }
 
         private void UpdateModel(Object sender, PropertyChangedEventArgs e)
@@ -266,5 +285,17 @@ namespace ChessMP.ViewModel
 
         /// <summary>Capture hover state. Tile is displayed red.</summary>
         Capture
+    }
+
+    /// <summary>
+    /// Specifies whether the tile is part of the Board, CapturedBlTiles or CapturedWhTiles
+    /// </summary>
+    public enum Membership
+    {
+        Board,
+
+        CapturedBl,
+
+        CapturedWh
     }
 }
