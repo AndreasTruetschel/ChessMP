@@ -43,7 +43,10 @@ namespace ChessMP.Model
                             a = Game.NetStream.ReceiveData();
                             if (a != null && a[0] != -1 && a[1] != -1 && a[2] != -1 && a[3] != -1 && this[a[0], a[1]] != null)
                             {
+                                Piece PieceOnTargetPosition = this[a[2], a[3]];
                                 this[a[2], a[3]] = this[a[0], a[1]];
+                                if (PieceOnTargetPosition != null)
+                                    PieceOnTargetPosition.Capture(PieceOnTargetPosition);
                                 RaisePropertyChanged($"Index[{a[2]}, {a[3]}]");
                                 this[a[0], a[1]] = null;
                                 RaisePropertyChanged($"Index[{a[0]}, {a[1]}]");
@@ -264,6 +267,9 @@ namespace ChessMP.Model
             return result;
         }
 
+        /// <summary>
+        /// Checks if one of the kings is in check or checkmate.
+        /// </summary>
         public void CheckOrCheckmate()
         {
             string mate = Checkmate();
