@@ -51,7 +51,10 @@ namespace ChessMP.Model
                                 this[a[0], a[1]] = null;
                                 RaisePropertyChanged($"Index[{a[0]}, {a[1]}]");
                                 Game.NetStream.MyTurn = true;
-                                CheckOrCheckmate();
+                                Task TaskCheckOrCheckmate = Task.Run(() =>
+                                {                                                                           
+                                    CheckOrCheckmate();                                                                          
+                                });
                             }
                         }
 
@@ -60,10 +63,9 @@ namespace ChessMP.Model
                             MessageBox.Show("Connection lost. Close game and start a new one.");
                             break;
                         }
-
                     }
                 }
-            });
+            });            
         }
 
         public Game Game
@@ -114,16 +116,16 @@ namespace ChessMP.Model
         }
 
         public Piece GetCapturedWhite(int x, int y)
-        {            
-                if (x < 0 || x > 1)
-                    throw new ArgumentOutOfRangeException(nameof(x));
+        {
+            if (x < 0 || x > 1)
+                throw new ArgumentOutOfRangeException(nameof(x));
 
-                if (y < 0 || y > 7)
-                    throw new ArgumentOutOfRangeException(nameof(y));
+            if (y < 0 || y > 7)
+                throw new ArgumentOutOfRangeException(nameof(y));
 
-                return _capturedWhite[y * 2 + x];          
+            return _capturedWhite[y * 2 + x];
         }
-        
+
         public void SetCapturedWhite(int x, int y, Piece piece)
         {
             if (x < 0 || x > 1)
@@ -283,6 +285,7 @@ namespace ChessMP.Model
             if (check != "")
                 MessageBox.Show("The " + check + " King is in check.");
         }
+
     }
 
     //public struct BoardPosition : IEquatable<BoardPosition>

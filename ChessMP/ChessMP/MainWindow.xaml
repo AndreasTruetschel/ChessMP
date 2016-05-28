@@ -36,7 +36,7 @@
         </Border>
 
         <Border Name="CapturedWhTiles" DockPanel.Dock="Right" Height="{Binding ElementName=board, Path=ActualHeight}" Width="148" DataContext="{Binding BoardViewModel}" Margin="20, 0, 0, 0">
-            <ItemsControl ItemsSource="{Binding CapturedBlTiles}">
+            <ItemsControl ItemsSource="{Binding CapturedWhTiles}">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate>
                         <UniformGrid Columns="2" Rows="8"/>
