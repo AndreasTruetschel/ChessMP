@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.IO;
 using System.Net;
 using System.Net.Sockets;
+using System.Runtime.CompilerServices;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Threading.Tasks;
 using System.Windows;
@@ -44,7 +45,7 @@ namespace ChessMP.Model
             set
             {
                 _isConnected = value;
-                RaisePropertyChanged("IsConnected");
+                RaisePropertyChanged();
             }
         }
 
@@ -59,7 +60,7 @@ namespace ChessMP.Model
             set
             {
                 _myTurn = value;
-                RaisePropertyChanged("MyTurn");
+                RaisePropertyChanged();
             }
         }
 
@@ -150,12 +151,12 @@ namespace ChessMP.Model
             return (int[])bf.Deserialize(NetStream);           
         }
 
-        private void RaisePropertyChanged(string propertyName)
+        private void RaisePropertyChanged([CallerMemberName] string propertyName = null)
         {
-            if (propertyName == null)
-                throw new ArgumentNullException(nameof(propertyName));
-            if (PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            //if (propertyName == null)
+            //    throw new ArgumentNullException(nameof(propertyName));
+            //if (PropertyChanged != null)
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

@@ -31,10 +31,10 @@ namespace ChessMP.ViewModel
 
         protected void RaisePropertyChanged([CallerMemberName] string propertyName = null)
         {
-            if (propertyName == null)
-                throw new ArgumentNullException(nameof(propertyName));
-            if(PropertyChanged != null)
-                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));            
+            //if (propertyName == null)
+            //    throw new ArgumentNullException(nameof(propertyName));
+            //if(PropertyChanged != null)
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));            
         }
     }
 }
